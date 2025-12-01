@@ -1,0 +1,3 @@
+mvn clean package
+
+java -jar target/bajaj-hiring-java-1.0.0.jar
