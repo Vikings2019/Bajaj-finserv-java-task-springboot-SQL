@@ -1,0 +1,53 @@
+WITH qualified_emps AS (
+    SELECT
+        e.emp_id,
+        e.first_name,
+        e.last_name,
+        e.dob,
+        e.department AS department_id
+    FROM employee e
+    JOIN payments p
+        ON p.emp_id = e.emp_id
+    WHERE p.amount > 70000
+    GROUP BY
+        e.emp_id,
+        e.first_name,
+        e.last_name,
+        e.dob,
+        e.department
+),
+emps_with_age AS (
+    SELECT
+        q.*,
+        TIMESTAMPDIFF(YEAR, q.dob, CURDATE()) AS age,
+        ROW_NUMBER() OVER (
+            PARTITION BY q.department_id
+            ORDER BY q.emp_id
+        ) AS rn
+    FROM qualified_emps q
+),
+dept_agg AS (
+    SELECT
+        department_id,
+        AVG(age) AS average_age
+    FROM emps_with_age
+    GROUP BY department_id
+)
+SELECT
+    d.department_name AS DEPARTMENT_NAME,
+    ROUND(da.average_age, 2) AS AVERAGE_AGE,
+    (
+        SELECT
+            GROUP_CONCAT(
+                CONCAT(e2.first_name, ' ', e2.last_name)
+                ORDER BY e2.emp_id
+                SEPARATOR ', '
+            )
+        FROM emps_with_age e2
+        WHERE e2.department_id = d.department_id
+          AND e2.rn <= 10
+    ) AS EMPLOYEE_LIST
+FROM department d
+LEFT JOIN dept_agg da
+    ON da.department_id = d.department_id
+ORDER BY d.department_id DESC;
