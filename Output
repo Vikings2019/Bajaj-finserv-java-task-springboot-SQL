@@ -1,0 +1,8 @@
+| DEPARTMENT_NAME | AVERAGE_AGE | EMPLOYEE_LIST                |
+| --------------- | ----------: | ---------------------------- |
+| IT              |        NULL | NULL                         |
+| Marketing       |       37.00 | David Jones                  |
+| Sales           |       33.00 | Emily Brown                  |
+| Engineering     |       42.50 | John Williams, Michael Smith |
+| Finance         |       35.00 | Sarah Johnson                |
+| HR              |       30.00 | Olivia Davis                 |
